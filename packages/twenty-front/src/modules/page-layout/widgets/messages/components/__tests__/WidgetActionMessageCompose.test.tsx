@@ -198,6 +198,7 @@ describe('WidgetActionMessageCompose', () => {
 
     await user.click(screen.getByRole('menuitem', { name: /Tim on LinkedIn/ }));
 
+    expect(openStartAppConversationInSidePanel).toHaveBeenCalledTimes(1);
     expect(openStartAppConversationInSidePanel).toHaveBeenCalledWith({
       messageChannelId: 'channel-linkedin',
       channelLabel: 'Tim on LinkedIn',
