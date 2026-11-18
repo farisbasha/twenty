@@ -312,6 +312,7 @@ import { AddTabAndSectionNavigationMenuItemsFastInstanceCommand } from 'src/data
 import { AddIsSystemSideEffectToRoleAndRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794922746000-add-is-system-side-effect-to-role-and-role-target';
 import { AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-slow-1794922746001-allow-system-side-effect-role-targets-per-user-workspace';
 import { AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-slow-1794926980299-add-workflow-version-core-workflow-foreign-key';
+import { AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794985963698-add-start-conversation-logic-function-to-messaging-provider';
 import { DropJobConfigFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1794932308059-drop-job-config';
 
 export const INSTANCE_COMMANDS = [
@@ -627,5 +628,6 @@ export const INSTANCE_COMMANDS = [
   AddIsSystemSideEffectToRoleAndRoleTargetFastInstanceCommand,
   AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand,
   AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand,
+  AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand,
   DropJobConfigFastInstanceCommand,
 ];
