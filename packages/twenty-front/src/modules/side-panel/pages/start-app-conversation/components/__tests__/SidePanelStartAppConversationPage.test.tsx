@@ -107,12 +107,14 @@ describe('SidePanelStartAppConversationPage', () => {
     );
     await user.click(screen.getByRole('button', { name: /Send/ }));
 
+    expect(startAppChannelConversation).toHaveBeenCalledTimes(1);
     expect(startAppChannelConversation).toHaveBeenCalledWith({
       messageChannelId: 'channel-linkedin',
       personId: PERSON_ID,
       text: 'Hi Grace',
       idempotencyKey: expect.any(String),
     });
+    expect(openRecordInSidePanel).toHaveBeenCalledTimes(1);
     expect(openRecordInSidePanel).toHaveBeenCalledWith({
       recordId: 'thread-1',
       objectNameSingular: 'messageThread',
@@ -143,6 +145,27 @@ describe('SidePanelStartAppConversationPage', () => {
     const [firstCall, secondCall] = startAppChannelConversation.mock.calls;
 
     expect(secondCall[0].idempotencyKey).toBe(firstCall[0].idempotencyKey);
+  });
+
+  it('sends an edited draft with a new idempotency key', async () => {
+    const user = userEvent.setup();
+
+    startAppChannelConversation.mockRejectedValueOnce(new Error('failed'));
+    startAppChannelConversation.mockResolvedValueOnce('thread-1');
+
+    render(<SidePanelStartAppConversationPage />, { wrapper: Wrapper });
+
+    const textbox = screen.getByRole('textbox', { name: 'Message' });
+
+    await user.type(textbox, 'Hi');
+    await user.click(screen.getByRole('button', { name: /Send/ }));
+    await user.type(textbox, ' Grace');
+    await user.click(screen.getByRole('button', { name: /Send/ }));
+
+    const [firstCall, secondCall] = startAppChannelConversation.mock.calls;
+
+    expect(secondCall[0].text).toBe('Hi Grace');
+    expect(secondCall[0].idempotencyKey).not.toBe(firstCall[0].idempotencyKey);
   });
 
   it('keeps the draft and its idempotency key when the user comes back to the composer', async () => {
@@ -191,7 +214,13 @@ describe('SidePanelStartAppConversationPage', () => {
     await user.type(screen.getByRole('textbox', { name: 'Message' }), 'Hi');
     await user.click(screen.getByRole('button', { name: /Send/ }));
 
-    expect(startAppChannelConversation).toHaveBeenCalled();
+    expect(startAppChannelConversation).toHaveBeenCalledTimes(1);
+    expect(startAppChannelConversation).toHaveBeenCalledWith({
+      messageChannelId: 'channel-linkedin',
+      personId: PERSON_ID,
+      text: 'Hi',
+      idempotencyKey: expect.any(String),
+    });
     expect(openRecordInSidePanel).not.toHaveBeenCalled();
     expect(goBackFromSidePanel).not.toHaveBeenCalled();
   });

@@ -182,10 +182,12 @@ export class MessagingProviderMessageSenderService {
     },
     workspaceId,
     payload,
+    onInvalidResult,
   }: {
     conversationStarter: MessagingProviderConversationStarter;
     workspaceId: string;
     payload: Omit<StartAppConversationPayload, 'messagingProviderName'>;
+    onInvalidResult: (message: string) => Promise<void>;
   }): Promise<StartAppConversationResult> {
     const data = await this.logicFunctionExecutorService.executeOrThrow({
       logicFunctionId: startConversationLogicFunctionId,
@@ -202,8 +204,12 @@ export class MessagingProviderMessageSenderService {
     const parsedResult = parseStartAppConversationResult(data);
 
     if (!parsedResult.isValid) {
+      const message = `startConversation logic function of messaging provider ${messagingProvider.id} returned an invalid result: ${parsedResult.reason}`;
+
+      await onInvalidResult(message);
+
       throw new MessagingProviderException(
-        `startConversation logic function of messaging provider ${messagingProvider.id} returned an invalid result: ${parsedResult.reason}`,
+        message,
         MessagingProviderExceptionCode.SEND_MESSAGE_FAILED,
       );
     }

@@ -709,6 +709,13 @@ export class ApplicationMessageSendService {
     deliveryKey: string;
   }): Promise<AppMessageDelivery> {
     const unrecordableDeliveryKey = `${deliveryKey}:unrecordable`;
+    // the provider already sent it, so a retry with the same key must not send it again
+    const markDeliveryUnrecordable = (message: string) =>
+      this.cacheStorageService.set(
+        unrecordableDeliveryKey,
+        message,
+        APP_MESSAGE_DELIVERY_TTL_MS,
+      );
     const unrecordableDeliveryMessage =
       await this.cacheStorageService.get<string>(unrecordableDeliveryKey);
 
@@ -749,6 +756,7 @@ export class ApplicationMessageSendService {
             idempotencyKey,
             recipients: [recipient],
           },
+          onInvalidResult: markDeliveryUnrecordable,
         },
       );
 
@@ -760,12 +768,7 @@ export class ApplicationMessageSendService {
     if (!isNonEmptyString(handle)) {
       const message = `startConversation logic function of messaging provider ${conversationStarter.messagingProvider.id} returned no handle for person ${personId}`;
 
-      // the provider already sent it, so a retry with the same key must not send it again
-      await this.cacheStorageService.set(
-        unrecordableDeliveryKey,
-        message,
-        APP_MESSAGE_DELIVERY_TTL_MS,
-      );
+      await markDeliveryUnrecordable(message);
 
       throw new MessagingProviderException(
         message,

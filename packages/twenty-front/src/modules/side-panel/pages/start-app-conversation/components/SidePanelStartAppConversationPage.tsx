@@ -169,7 +169,10 @@ export const SidePanelStartAppConversationPage = () => {
           minRows={4}
           value={startAppConversationText}
           disabled={loading}
-          onChange={(event) => setStartAppConversationText(event.target.value)}
+          onChange={(event) => {
+            setStartAppConversationText(event.target.value);
+            setStartAppConversationIdempotencyKey(null);
+          }}
         />
       </StyledContent>
       <SidePanelFooter
