@@ -17,5 +17,7 @@ export type StartAppConversationResult = {
   externalId: string;
   threadExternalId: string;
   sentAt?: string;
-  recipients?: { personId: string; handle: string }[];
+  recipients?: (Pick<StartAppConversationRecipient, 'personId'> & {
+    handle: string;
+  })[];
 };

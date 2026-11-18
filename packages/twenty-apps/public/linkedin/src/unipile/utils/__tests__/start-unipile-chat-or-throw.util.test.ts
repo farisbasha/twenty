@@ -85,7 +85,12 @@ describe('startUnipileChatOrThrow', () => {
     });
 
     await expect(start()).rejects.toBeInstanceOf(UnipileRateLimitError);
-    expect(mocks.startChat).toHaveBeenCalledOnce();
+    expect(mocks.startChat).toHaveBeenCalledExactlyOnceWith({
+      auth: 'key',
+      throwOnError: true,
+      path: { account_id: 'acc_1' },
+      body: { text: 'Hi Grace, nice to meet you', users_ids: 'ACoAAA123' },
+    });
     expect(mocks.wait).not.toHaveBeenCalled();
   });
 });
